@@ -337,10 +337,10 @@ To release the trigger for a command that doesn't change any rows, employ the sy
 The following T-SQL code snippet shows how to release the trigger for a command that doesn't change any rows. This code should be present at the beginning of each DML trigger:
 
 ```sql
-IF (ROWCOUNT_BIG() = 0)
+IF NOT EXISTS(SELECT * FROM [inserted | deleted])
 RETURN;
 ```
-  
+ROWCOUNT_BIG() will return the number of total records affected in a MERGE statement. If the MERGE statement have both UPDATE and INSERT scenarios, and the actual execution only insert 3 rows, the UPDATE trigger will be executed as well and the ROWCOUNT_BIG() will be 3 in all cases.
   
 ## Remarks for DDL Triggers  
 DDL triggers, like standard triggers, launch stored procedures in response to an event. But, unlike standard triggers, they don't run in response to UPDATE, INSERT, or DELETE statements on a table or view. Instead, they primarily run in response to data definition language (DDL) statements. The statement types include CREATE, ALTER, DROP, GRANT, DENY, REVOKE, and UPDATE STATISTICS. Certain system stored procedures that carry out DDL-like operations can also fire DDL triggers.  
